@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import xlsxwriter
@@ -88,6 +89,8 @@ class ExcelReportService:
                             'из них', hat_format)
 
     def _create_file(self) -> None:
+        if not os.path.exists('./output'):
+            os.makedirs('./output')
         file_name = f'./output/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.xlsx'
         workbook = xlsxwriter.Workbook(file_name)
         worksheet = workbook.add_worksheet()
@@ -105,14 +108,11 @@ class ExcelReportService:
         self.ws.set_row(9, 30)
 
     def _fill_table(self, statistics: list[dict]) -> None:
-        oblast = None
-        rayon = None
-        forma22 = None
-        unprocessed_count = 0
-        unprocessed_sum = 0
+        oblast, rayon, forma22 = None, None, None
+        unprocessed_count, unprocessed_sum = 0, 0
+
         rayon_starts_i = 12
         i = 10
-
         for row in statistics:
             if oblast != row['Oblast']:
                 oblast = row['Oblast']

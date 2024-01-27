@@ -57,13 +57,10 @@ class DKRRepository:
             func.count(self.model.Area_ga).label('Area_ga count'),
             func.sum(self.model.Area_ga).label('Area_ga sum'),
         ).group_by(
-            self.model.Oblast
-        ).group_by(
-            self.model.Rayon
-        ).group_by(
-            self.model.Forma22
-        ).group_by(
-            self.model.SVovlech
+            self.model.Oblast,
+            self.model.Rayon,
+            self.model.Forma22,
+            self.model.SVovlech,
         ).order_by(
             self.model.Oblast,
             self.model.Rayon,
@@ -93,7 +90,6 @@ class DKRRepository:
         if svovlech is not None:
             queryset = self._filter_by_svovlech(queryset, svovlech)
 
-        print(queryset)
         with session_maker() as session:
             result = session.execute(queryset).mappings().fetchall()
         return result
