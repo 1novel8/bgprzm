@@ -1,7 +1,11 @@
+import os
+
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-db_path = r'D:\projects\bgprz\DKR.mdb'
+load_dotenv()
+db_path = os.getenv('DB_PATH', None)
 db_driver = 'DRIVER=Microsoft Access Driver (*.mdb, *.accdb)'
 engine = create_engine(
     f'access+pyodbc://?odbc_connect={db_driver};'
