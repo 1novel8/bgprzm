@@ -1,4 +1,5 @@
 from datetime import datetime
+from multiprocessing import Process
 from tkinter import (Button, Checkbutton, IntVar, Label, StringVar, Tk,
                      messagebox)
 from tkinter.ttk import Combobox
@@ -120,7 +121,12 @@ class MainWindow:
         prompt = self._generate_prompt()
         if prompt is None:
             return
-        self.service.generate_report(**prompt)
+        self._show_info_message('Запрос принят. Скоро ваш отчет появится в папке output.')
+        generate_report_process = Process(
+            target=self.service.generate_report,
+            kwargs=prompt
+        )
+        generate_report_process.start()
 
     def _generate_prompt(self) -> dict | None:
         prompt = {}
@@ -149,13 +155,13 @@ class MainWindow:
         # rayon
         if self.rayon_value.get() not in self.rayon_list:
             self._show_error_message('Район выбран некорректно')
-            return
+            return None
         if self.rayon_value.get() != 'Все':
             prompt['rayon'] = self.rayon_value.get()
         # oblast
         if self.oblast_value.get() not in self.oblast_list:
             self._show_error_message('Область выбрана некорректно')
-            return
+            return None
         if self.oblast_value.get() != 'Все':
             prompt['oblast'] = self.oblast_value.get()
 
@@ -187,6 +193,10 @@ class MainWindow:
     @staticmethod
     def _show_error_message(message) -> None:
         messagebox.showerror("Ошибка", f"{message}")
+
+    @staticmethod
+    def _show_info_message(message) -> None:
+        messagebox.showinfo("Информация", f"{message}")
 
     @staticmethod
     def _limit_text_length(text, max_length=70):
